@@ -1,0 +1,21 @@
+refine <- read.csv("~/R/Resources/DW/refine_original.csv")
+refine$company[grep('ph', refine$company)] <- "Phillips"
+refine$company[grep('f', refine$company)] <- "Phillips"
+refine$company[grep('zo', refine$company)] <- "Akzo"
+refine$company[grep('van', refine$company)] <- "Van Houten"
+refine$company[grep('uni', refine$company)] <- "Unilever"
+refine <-refine %>% 
+         separate(Product.code...number,c("ProductCode","ProductNumber"))
+refine <- mutate(refine, ProductCategory = ProductCode)
+refine$ProductCategory[grep('p', refine$ProductCategory)] <- "Smartphone"
+refine$ProductCategory[grep('v', refine$ProductCategory)] <- "TV"
+refine$ProductCategory[grep('x', refine$ProductCategory)] <- "Laptop"
+refine$ProductCategory[grep('q', refine$ProductCategory)] <- "Tablet"
+refine <- unite(refine, full_address,address,city,country, sep = ', ')
+refine = within(refine, {
+  company_phillips = ifelse(company == "Phillips", 1, 0)
+  company_akzo = ifelse(company == "Akzo", 1, 0)
+  company_unilever = ifelse(company == "Unilever",1,0)
+  'company_van houten' = ifelse(company == "Van Houten",1,0)
+})
+write.csv(refine, file = "~/R/Resources/DW/refine_clean.csv")
